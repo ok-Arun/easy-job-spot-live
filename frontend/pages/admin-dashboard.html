@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,32 +10,21 @@
     <link rel="stylesheet" href="../css/admin-dashboard.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
 
 <div class="admin-layout">
 
-    <aside class="sidebar">
-        <h2 class="logo">EasyJobSpot</h2>
-        <nav>
-            <a href="admin-dashboard.html" class="active">Dashboard</a>
-            <a href="admin-all-jobs.html">All Jobs</a>
-            <a href="admin-job-moderation.html">Job Moderation</a>
-            <a href="admin-all-users.html">All Users</a>
-            <a href="admin-provider-approval.html">Provider Approvals</a>
-        </nav>
-    </aside>
+    <!-- GLOBAL SIDEBAR -->
+    <div id="adminSidebar"></div>
 
     <main class="main-content">
 
-        <!-- HEADER WITH LOGOUT -->
-        <header class="dashboard-header">
-            <h1>Admin Dashboard</h1>
+        <!-- GLOBAL HEADER -->
+        <div id="adminHeader"></div>
 
-        </header>
-
-        <!-- USER OVERVIEW -->
         <h2 class="section-title">User Overview</h2>
 
         <section class="stats-grid user-stats">
@@ -71,7 +61,7 @@
 
         </section>
 
-        <!-- JOB OVERVIEW -->
+
         <h2 class="section-title">Job & Application Overview</h2>
 
         <section class="stats-grid">
@@ -116,35 +106,76 @@
 
         </section>
 
-        <!-- CHARTS -->
+
+        <!-- ================= CHARTS ================= -->
+
         <section class="charts-section">
 
+            <!-- Jobs Trend (UNCHANGED) -->
             <div class="chart-container">
                 <h3>Jobs Trend</h3>
                 <canvas id="jobsTrendChart"></canvas>
             </div>
 
+
+            <!-- Applications Trend (LINE CHART) -->
             <div class="chart-container">
-                <h3>Applications Trend</h3>
+                <h3>Applications Growth</h3>
                 <canvas id="applicationsTrendChart"></canvas>
             </div>
 
+
+            <!-- Hiring Funnel -->
             <div class="chart-container funnel">
-                <h3>Hiring Funnel</h3>
-                <canvas id="hiringFunnelChart"></canvas>
+
+                <h3>Hiring Funnel Performance</h3>
+
+                <div class="funnel-wrapper">
+
+                    <!-- Donut Chart -->
+                    <div class="funnel-chart">
+                        <canvas id="hiringFunnelChart"></canvas>
+                    </div>
+
+                    <!-- Funnel Stats -->
+                    <div class="funnel-stats">
+
+                        <div class="funnel-stat">
+                            <span class="label applied">Applied</span>
+                            <p id="funnelApplied">--</p>
+                        </div>
+
+                        <div class="funnel-stat">
+                            <span class="label shortlisted">Shortlisted</span>
+                            <p id="funnelShortlisted">--</p>
+                        </div>
+
+                        <div class="funnel-stat">
+                            <span class="label rejected">Rejected</span>
+                            <p id="funnelRejected">--</p>
+                        </div>
+
+                        <div class="funnel-stat">
+                            <span class="label hired">Hired</span>
+                            <p id="funnelHired">--</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </section>
 
     </main>
+
 </div>
 
-
+<script src="../js/config.js"></script>
+<script src="../js/config.prod.js"></script>
 <script src="../js/admin-global.js"></script>
 <script src="../js/admin-dashboard.js"></script>
-
-
-
 
 </body>
 </html>

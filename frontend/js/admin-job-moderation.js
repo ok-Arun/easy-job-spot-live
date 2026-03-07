@@ -1,4 +1,6 @@
-const BASE_URL = "https://easy-job-spot-production.up.railway.app/api/admin/jobs";
+/* ================= CONFIG ================= */
+
+const API_BASE = `${window.APP_CONFIG.API_BASE_URL}/admin/jobs`;
 
 let selectedJobId = null;
 let selectedJobData = null;
@@ -7,6 +9,7 @@ let actionType = null;
 document.addEventListener("DOMContentLoaded", () => {
 
     const token = localStorage.getItem("token");
+
     if (!token) {
         window.location.href = "/login.html";
         return;
@@ -21,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
 async function fetchPendingJobs() {
 
     try {
-        const response = await fetch(`${BASE_URL}/pending`, {
+
+        const response = await fetch(`${API_BASE}/pending`, {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -31,15 +35,18 @@ async function fetchPendingJobs() {
 
         if (!result.success) return;
 
-        // ✅ set pending count correctly
-        document.getElementById("totalPendingJobs").innerText =
-            result.data.totalPending || 0;
+        const jobs = result.data.content || [];
 
-        renderJobs(result.data.content);
+        document.getElementById("totalPendingJobs").innerText = jobs.length;
+
+        renderJobs(jobs);
 
     } catch (error) {
+
         console.error("Error fetching jobs:", error);
+
     }
+
 }
 
 
@@ -48,15 +55,25 @@ async function fetchPendingJobs() {
 function renderJobs(jobs) {
 
     const tableBody = document.getElementById("jobsTableBody");
+    const mobileContainer = document.getElementById("mobileJobsContainer");
+
     tableBody.innerHTML = "";
+    mobileContainer.innerHTML = "";
 
     if (!jobs || jobs.length === 0) {
+
         tableBody.innerHTML =
             `<tr><td colspan="6" style="text-align:center;">No pending jobs</td></tr>`;
+
+        mobileContainer.innerHTML =
+            `<p style="text-align:center;">No pending jobs</p>`;
+
         return;
     }
 
     jobs.forEach(job => {
+
+        /* ===== DESKTOP TABLE ROW ===== */
 
         const row = document.createElement("tr");
 
@@ -73,12 +90,54 @@ function renderJobs(jobs) {
             </td>
         `;
 
-        row.querySelector(".view-btn").addEventListener("click", () => openViewModal(job));
-        row.querySelector(".approve-btn").addEventListener("click", () => openConfirmModal("approve", job));
-        row.querySelector(".reject-btn").addEventListener("click", () => openConfirmModal("reject", job));
+        row.querySelector(".view-btn")
+            .addEventListener("click", () => openViewModal(job));
+
+        row.querySelector(".approve-btn")
+            .addEventListener("click", () => openConfirmModal("approve", job));
+
+        row.querySelector(".reject-btn")
+            .addEventListener("click", () => openConfirmModal("reject", job));
 
         tableBody.appendChild(row);
+
+
+        /* ===== MOBILE CARD ===== */
+
+        const card = document.createElement("div");
+        card.className = "job-card";
+
+        card.innerHTML = `
+            <div class="job-card-header">
+                <div class="job-card-title">${job.title}</div>
+                ${getStatusBadge(job.status)}
+            </div>
+
+            <div class="job-card-company">${job.company}</div>
+
+            <div class="job-card-meta">
+                📍 ${job.location} • 📅 ${formatDate(job.createdAt)}
+            </div>
+
+            <div class="job-card-actions">
+                <button class="view-btn">View</button>
+                <button class="approve-btn">Approve</button>
+                <button class="reject-btn">Reject</button>
+            </div>
+        `;
+
+        card.querySelector(".view-btn")
+            .addEventListener("click", () => openViewModal(job));
+
+        card.querySelector(".approve-btn")
+            .addEventListener("click", () => openConfirmModal("approve", job));
+
+        card.querySelector(".reject-btn")
+            .addEventListener("click", () => openConfirmModal("reject", job));
+
+        mobileContainer.appendChild(card);
     });
+
 }
 
 
@@ -106,6 +165,7 @@ function openViewModal(job) {
     `;
 
     document.getElementById("viewModal").classList.remove("hidden");
+
 }
 
 function closeViewModal() {
@@ -141,11 +201,13 @@ function openConfirmModal(type, job) {
         reasonBox.value = "";
         actionBtn.innerText = "Reject";
         actionBtn.className = "reject-btn";
+
     }
 
     actionBtn.onclick = confirmAction;
 
     document.getElementById("confirmModal").classList.remove("hidden");
+
 }
 
 function closeConfirmModal() {
@@ -167,7 +229,7 @@ async function confirmAction() {
 
         if (actionType === "approve") {
 
-            await fetch(`${BASE_URL}/${selectedJobId}/approve`, {
+            await fetch(`${API_BASE}/${selectedJobId}/approve`, {
                 method: "PUT",
                 headers
             });
@@ -182,7 +244,7 @@ async function confirmAction() {
             }
 
             await fetch(
-                `${BASE_URL}/${selectedJobId}/reject?reason=${encodeURIComponent(reason)}`,
+                `${API_BASE}/${selectedJobId}/reject?reason=${encodeURIComponent(reason)}`,
                 {
                     method: "PUT",
                     headers
@@ -194,8 +256,11 @@ async function confirmAction() {
         fetchPendingJobs();
 
     } catch (error) {
+
         console.error("Action failed", error);
+
     }
+
 }
 
 

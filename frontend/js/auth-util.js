@@ -10,6 +10,10 @@ const PROFILE_COMPLETED_KEY = "profileCompleted";
    ========================= */
 
 function saveAuthSession({ token, userType, userName, profileCompleted }) {
+
+    // Clear any previous session to avoid role leakage
+    clearAuthSession();
+
     if (!token) {
         console.error("No token provided to saveAuthSession()");
         return;
@@ -17,8 +21,14 @@ function saveAuthSession({ token, userType, userName, profileCompleted }) {
 
     localStorage.setItem(TOKEN_KEY, token);
 
-    if (userType) localStorage.setItem(USER_TYPE_KEY, userType);
-    if (userName) localStorage.setItem(USER_NAME_KEY, userName);
+    if (userType) {
+        localStorage.setItem(USER_TYPE_KEY, userType);
+    }
+
+    if (userName) {
+        localStorage.setItem(USER_NAME_KEY, userName);
+    }
+
     if (profileCompleted !== undefined) {
         localStorage.setItem(PROFILE_COMPLETED_KEY, profileCompleted ? "1" : "0");
     }
@@ -49,10 +59,12 @@ function isProfileCompleted() {
    ========================= */
 
 function clearAuthSession() {
+
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_TYPE_KEY);
     localStorage.removeItem(USER_NAME_KEY);
     localStorage.removeItem(PROFILE_COMPLETED_KEY);
+
 }
 
 /* =========================
@@ -61,19 +73,33 @@ function clearAuthSession() {
 
 // Redirect to login if not authenticated
 function requireAuth() {
+
     if (!getToken()) {
         window.location.href = "/pages/login.html";
     }
+
 }
 
-// Redirect to correct profile page if incomplete
-function requireCompletedProfile() {
-    if (!isProfileCompleted()) {
-        const type = getUserType();
 
-        window.location.href =
-            type === "JOB_SEEKER"
-                ? "/pages/job-seeker-profile.html"
-                : "/pages/provider-profile.html";
+// Redirect to profile page if incomplete
+function requireCompletedProfile() {
+
+    const userType = getUserType();
+
+    // Admin does not need profile completion
+    if (userType === "ADMIN") {
+        return;
+    }
+
+    if (!isProfileCompleted()) {
+
+        if (userType === "JOB_SEEKER") {
+            window.location.href = "/pages/job-seeker-profile.html";
+        }
+
+        if (userType === "JOB_PROVIDER") {
+            window.location.href = "/pages/provider-profile.html";
+        }
+
     }
 }

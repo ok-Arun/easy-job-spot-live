@@ -5,33 +5,27 @@
     <title>Job Moderation | Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Global Layout CSS -->
     <link rel="stylesheet" href="../css/sidebar.css">
+
+    <!-- Page CSS -->
     <link rel="stylesheet" href="../css/admin-job-moderation.css">
 </head>
+
 <body>
 
 <div class="admin-layout">
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <h2 class="logo">EasyJobSpot</h2>
-        <nav>
-            <a href="admin-dashboard.html">Dashboard</a>
-            <a href="admin-all-jobs.html" >All Jobs</a>
-            <a href="admin-job-moderation.html" class="active">Job Moderation</a>
-            <a href="admin-all-users.html">All Users</a>
-            <a href="admin-provider-approval.html">Provider Approvals</a>
-        </nav>
-    </aside>
+    <!-- GLOBAL SIDEBAR -->
+    <div id="adminSidebar"></div>
 
-    <!-- Main -->
+    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-        <header class="page-header">
-            <h1>Job Moderation Panel</h1>
-        </header>
+        <!-- GLOBAL HEADER -->
+        <div id="adminHeader"></div>
 
-
+        <!-- SUMMARY -->
         <section class="summary-section">
             <div class="summary-card">
                 <h3>Total Pending Jobs</h3>
@@ -39,9 +33,12 @@
             </div>
         </section>
 
-
+        <!-- JOB TABLE / MOBILE CARDS -->
         <section class="table-section">
+
+            <!-- DESKTOP TABLE -->
             <table class="jobs-table">
+
                 <thead>
                 <tr>
                     <th>Title</th>
@@ -52,44 +49,62 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody id="jobsTableBody">
-                </tbody>
+
+                <tbody id="jobsTableBody"></tbody>
+
             </table>
+
+            <!-- MOBILE JOB CARDS -->
+            <div id="mobileJobsContainer" class="mobile-jobs"></div>
+
         </section>
 
     </main>
+
 </div>
 
+
 <!-- ================= VIEW MODAL ================= -->
+
 <div id="viewModal" class="modal hidden">
     <div class="modal-content large">
+
         <h2>Job Details</h2>
         <div id="jobDetails"></div>
+
         <div class="modal-actions">
             <button class="secondary-btn" onclick="closeViewModal()">Close</button>
         </div>
+
     </div>
 </div>
 
+
 <!-- ================= CONFIRM MODAL ================= -->
+
 <div id="confirmModal" class="modal hidden">
     <div class="modal-content">
+
         <h2 id="confirmTitle"></h2>
         <p id="confirmMessage"></p>
 
-        <textarea id="rejectReason"
-                  class="hidden"
-                  placeholder="Enter rejection reason..."></textarea>
+        <textarea
+                id="rejectReason"
+                class="hidden"
+                placeholder="Enter rejection reason...">
+        </textarea>
 
         <div class="modal-actions">
             <button class="secondary-btn" onclick="closeConfirmModal()">Cancel</button>
             <button id="confirmActionBtn"></button>
         </div>
+
     </div>
 </div>
 
-<script src="../js/admin-job-moderation.js"></script>
+<script src="../js/config.js"></script>
 <script src="../js/admin-global.js"></script>
+<script src="../js/admin-job-moderation.js"></script>
 
 </body>
 </html>

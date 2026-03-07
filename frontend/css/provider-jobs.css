@@ -1,80 +1,129 @@
-/* FILTERS */
+/* =====================================================
+   PAGE TITLE
+===================================================== */
+
+.page-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+/* =====================================================
+   FILTERS
+===================================================== */
+
 .job-filters {
     display: flex;
     gap: 10px;
-    margin-bottom: 25px;
+    margin-bottom: 24px;
 }
 
 .filter-btn {
     padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid #cbd5e1;
-    background: #fff;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #f3f4f6;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
     cursor: pointer;
-    font-size: 20px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-btn:hover {
+    background: #e5e7eb;
 }
 
 .filter-btn.active {
     background: #2563eb;
     color: #fff;
     border-color: #2563eb;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
 }
 
-/* JOB LIST */
+/* =====================================================
+   JOB LIST WIDTH CONTROL
+===================================================== */
+
 .job-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-    gap: 22px;
-}
-
-/* JOB CARD */
-.job-card {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-height: 230px;
+    gap: 22px;
+    max-width: 1000px;   /* control width */
+    margin: 0 auto;      /* center cards */
 }
 
-/* HEADER */
-.job-header {
+.job-card-horizontal {
+    padding: 18px 22px;  /* slightly tighter */
+}
+/* =====================================================
+   JOB CARD
+===================================================== */
+
+.job-card-horizontal {
+    background: #ffffff;
+    padding: 20px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+    transition: box-shadow 0.2s ease;
+}
+
+.job-card-horizontal:hover {
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+}
+
+/* =====================================================
+   TOP ROW
+===================================================== */
+
+.job-top-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 14px;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 6px;
 }
 
 .job-title {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
-    color: #0f172a;
+    color: #111827;
+    margin-bottom: 4px;
 }
 
-.job-meta {
-    font-size: 15px;
-    color: #64748b;
-    margin-top: 4px;
+.job-sub-info {
+    font-size: 13px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-/* STATUS BADGE */
+.dot {
+    color: #d1d5db;
+}
+
+/* =====================================================
+   STATUS BADGES
+===================================================== */
+
 .job-status {
-    padding: 4px 15px;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
     font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 .badge-active {
-    background: #dcfce7;
-    color: #166534;
+    background: #e6f9ef;
+    color: #15803d;
 }
 
 .badge-pending {
-    background: #fef9c3;
-    color: #854d0e;
+    background: #fef3c7;
+    color: #92400e;
 }
 
 .badge-closed {
@@ -82,72 +131,61 @@
     color: #991b1b;
 }
 
-/* INFO */
-.job-info {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    font-size: 18px;
-    color: #334155;
-    margin-bottom: 18px;
-}
-
-/* ACTIONS */
-.job-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.job-actions .btn {
-    padding: 7px 14px;
-    font-size: 15px;
-}
-
-/* CARD BORDER BY STATUS */
-.job-active {
-    border-left: 5px solid #22c55e;
-}
-
-.job-pending {
-    border-left: 5px solid #eab308;
-}
-
-.job-closed {
-    border-left: 5px solid #ef4444;
-}
-
-
 /* =====================================================
-   MODAL STYLES (NEW)
+   META ROW
 ===================================================== */
 
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+.job-meta-row {
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 14px;
+}
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.job-actions-row {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
+    gap: 12px;
 }
 
-.hidden {
-    display: none;
+.job-actions-row .btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 8px;
 }
 
-.modal-box {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    width: 320px;
-    max-width: 90%;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+/* View Applications – Primary */
+.job-actions-row .btn-primary {
+    background: #2563eb;
+    color: #fff;
 }
 
-.modal-actions {
-    margin-top: 18px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
+/* Edit – Neutral */
+.job-actions-row .btn-secondary {
+    background: #f3f4f6;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+}
+
+/* Close/Reopen – Danger */
+.job-actions-row .btn-danger {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 900px) {
+    .job-top-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .job-actions-row {
+        flex-wrap: wrap;
+    }
 }

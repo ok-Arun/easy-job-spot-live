@@ -1,5 +1,5 @@
 // ================= CONFIG =================
-const BASE_URL = "https://easy-job-spot-production.up.railway.app/api/admin/dashboard";
+const API_BASE = `${window.APP_CONFIG.API_BASE_URL}/admin/dashboard`;
 
 let jobsChart = null;
 let applicationsChart = null;
@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     highlightSidebar();
+    setupLogout();
     fetchStats(token);
     fetchTrends(token);
 });
@@ -24,22 +25,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ================= SIDEBAR =================
 function highlightSidebar() {
+
     const links = document.querySelectorAll(".sidebar a");
     const currentPage = window.location.pathname.split("/").pop().toLowerCase();
 
     links.forEach(link => {
+
         link.classList.remove("active");
+
         if (link.getAttribute("href").toLowerCase() === currentPage) {
             link.classList.add("active");
         }
+
     });
+
+}
+
+
+// ================= LOGOUT =================
+function setupLogout() {
+
+    const logoutBtn = document.querySelector(".logout-btn");
+
+    if (!logoutBtn) return;
+
+    logoutBtn.addEventListener("click", () => {
+
+        localStorage.removeItem("token");
+        window.location.replace("/pages/login.html");
+
+    });
+
 }
 
 
 // ================= FETCH STATS =================
 async function fetchStats(token) {
+
     try {
-        const response = await fetch(`${BASE_URL}/stats`, {
+
+        const response = await fetch(`${API_BASE}/stats`, {
             headers: { Authorization: "Bearer " + token }
         });
 
@@ -49,35 +74,40 @@ async function fetchStats(token) {
         }
 
         const result = await response.json();
-        const data = result.data;
+        const data = result.data || {};
 
-        document.getElementById("totalJobs").innerText = data.jobs.total;
-        document.getElementById("pendingJobs").innerText = data.jobs.pending;
-        document.getElementById("activeJobs").innerText = data.jobs.active;
+        setText("totalJobs", data.jobs?.total);
+        setText("pendingJobs", data.jobs?.pending);
+        setText("activeJobs", data.jobs?.active);
 
-        document.getElementById("totalApplications").innerText = data.applications.total;
-        document.getElementById("shortlisted").innerText = data.applications.shortlisted;
-        document.getElementById("rejected").innerText = data.applications.rejected;
-        document.getElementById("hired").innerText = data.applications.hired;
+        setText("totalApplications", data.applications?.total);
+        setText("shortlisted", data.applications?.shortlisted);
+        setText("rejected", data.applications?.rejected);
+        setText("hired", data.applications?.hired);
 
         if (data.users) {
-            document.getElementById("totalUsers").innerText = data.users.total;
-            document.getElementById("jobSeekers").innerText = data.users.jobSeekers;
-            document.getElementById("providers").innerText = data.users.providers;
-            document.getElementById("admins").innerText = data.users.admins;
-            document.getElementById("pendingProviders").innerText = data.users.pendingProviders;
+            setText("totalUsers", data.users?.total);
+            setText("jobSeekers", data.users?.jobSeekers);
+            setText("providers", data.users?.providers);
+            setText("admins", data.users?.admins);
+            setText("pendingProviders", data.users?.pendingProviders);
         }
 
     } catch (error) {
+
         console.error("Failed to fetch stats:", error);
+
     }
+
 }
 
 
 // ================= FETCH TRENDS =================
 async function fetchTrends(token) {
+
     try {
-        const response = await fetch(`${BASE_URL}/trends`, {
+
+        const response = await fetch(`${API_BASE}/trends`, {
             headers: { Authorization: "Bearer " + token }
         });
 
@@ -87,60 +117,163 @@ async function fetchTrends(token) {
         }
 
         const result = await response.json();
-        const data = result.data;
+        const data = result.data || {};
 
         renderJobsTrend(data.jobs);
         renderApplicationsTrend(data.applications);
         renderHiringFunnel(data.hiringFunnel);
 
     } catch (error) {
+
         console.error("Failed to fetch trends:", error);
+
     }
+
 }
 
 
-// ================= CHARTS =================
+// ================= SAFE TEXT SETTER =================
+function setText(id, value) {
+
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.innerText = value ?? 0;
+    }
+
+}
+
+
+// ================= JOB TREND CHART =================
 function renderJobsTrend(jobs) {
+
+    if (!jobs) return;
+
     if (jobsChart) jobsChart.destroy();
 
-    jobsChart = new Chart(document.getElementById("jobsTrendChart"), {
-        type: "bar",
-        data: {
-            labels: ["Created (30d)", "Approved (30d)"],
-            datasets: [{
-                data: [jobs.created.last30Days, jobs.approved.last30Days],
-                backgroundColor: ["#3b82f6", "#10b981"]
-            }]
+    jobsChart = new Chart(
+        document.getElementById("jobsTrendChart"),
+        {
+            type: "bar",
+            data: {
+                labels: ["Created (30d)", "Approved (30d)"],
+                datasets: [{
+                    data: [
+                        jobs.created?.last30Days || 0,
+                        jobs.approved?.last30Days || 0
+                    ],
+                    backgroundColor: ["#3b82f6", "#10b981"]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
         }
-    });
+    );
+
 }
 
+
+// ================= APPLICATIONS TREND =================
 function renderApplicationsTrend(applications) {
+
+    if (!applications) return;
+
     if (applicationsChart) applicationsChart.destroy();
 
-    applicationsChart = new Chart(document.getElementById("applicationsTrendChart"), {
-        type: "bar",
-        data: {
-            labels: ["Applications (30d)"],
-            datasets: [{
-                data: [applications.received.last30Days],
-                backgroundColor: ["#6366f1"]
-            }]
+    const last30 = applications.received?.last30Days || 0;
+    const last7 = applications.received?.last7Days || 0;
+
+    const previous23Days = Math.max(last30 - last7, 0);
+
+    applicationsChart = new Chart(
+        document.getElementById("applicationsTrendChart"),
+        {
+            type: "line",
+            data: {
+                labels: ["Previous 23 Days", "Last 7 Days"],
+                datasets: [{
+                    label: "Applications",
+                    data: [previous23Days, last7],
+                    borderColor: "#6366f1",
+                    backgroundColor: "rgba(99,102,241,0.25)",
+                    tension: 0.35,
+                    fill: true,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#6366f1"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: "#94a3b8" }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: "rgba(148,163,184,0.15)" },
+                        ticks: { color: "#94a3b8" }
+                    }
+                }
+            }
         }
-    });
+    );
+
 }
 
+
+// ================= HIRING FUNNEL =================
 function renderHiringFunnel(funnel) {
+
+    if (!funnel) return;
+
+    const applied = funnel.applied || 0;
+    const shortlisted = funnel.shortlisted || 0;
+    const rejected = funnel.rejected || 0;
+    const hired = funnel.hired || 0;
+
+    setText("funnelApplied", applied);
+    setText("funnelShortlisted", shortlisted);
+    setText("funnelRejected", rejected);
+    setText("funnelHired", hired);
+
     if (hiringChart) hiringChart.destroy();
 
-    hiringChart = new Chart(document.getElementById("hiringFunnelChart"), {
-        type: "doughnut",
-        data: {
-            labels: ["Applied", "Shortlisted", "Rejected", "Hired"],
-            datasets: [{
-                data: [funnel.applied, funnel.shortlisted, funnel.rejected, funnel.hired],
-                backgroundColor: ["#2563eb", "#14b8a6", "#dc2626", "#16a34a"]
-            }]
+    hiringChart = new Chart(
+        document.getElementById("hiringFunnelChart"),
+        {
+            type: "doughnut",
+            data: {
+                labels: ["Applied", "Shortlisted", "Rejected", "Hired"],
+                datasets: [{
+                    data: [applied, shortlisted, rejected, hired],
+                    backgroundColor: [
+                        "#2563eb",
+                        "#14b8a6",
+                        "#dc2626",
+                        "#16a34a"
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "70%",
+                plugins: {
+                    legend: { display: false }
+                }
+            }
         }
-    });
+    );
+
 }

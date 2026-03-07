@@ -5,13 +5,11 @@
     <title>Provider Dashboard | Job Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../css/base.css">
+        <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/provider-common.css">
     <link rel="stylesheet" href="../css/provider-dashboard.css">
 </head>
 <body>
-
-<!-- Navbar will be injected by provider-layout.js -->
 
 <main class="container provider-dashboard">
 
@@ -65,24 +63,11 @@
             </button>
         </section>
 
-        <!-- PERFORMANCE TABLE -->
-        <section class="dashboard-table">
+        <!-- JOB PERFORMANCE CARDS -->
+        <section class="dashboard-jobs">
             <h2>Job Performance</h2>
 
-            <table>
-                <thead>
-                <tr>
-                    <th>Job Title</th>
-                    <th>Total Apps</th>
-                    <th>Shortlisted</th>
-                    <th>Rejected</th>
-                    <th>Hired</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-
-                <tbody id="jobStatsBody"></tbody>
-            </table>
+            <div id="jobStatsBody" class="job-cards-container"></div>
 
             <div id="emptyJobsMessage" class="hidden empty-state-box">
                 No jobs yet.

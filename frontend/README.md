@@ -33,20 +33,20 @@ No framework dependency → **lightweight, fast, and easy to deploy**.
 
 # 3. Project Structure
 
-```
+
 frontend/
 │
 ├── index.html
 ├── css/
 ├── js/
 └── pages/
-```
+
 
 Architecture principle:
 
-```
+
 UI Page → JS Module → Backend API
-```
+
 
 ---
 
@@ -56,15 +56,15 @@ UI Page → JS Module → Backend API
 
 Backend runs on **port 8081**.
 
-```bash
+bash
 mvn spring-boot:run
-```
+
 
 Backend base URL:
 
-```
+
 http://localhost:8081
-```
+
 
 ---
 
@@ -72,15 +72,15 @@ http://localhost:8081
 
 From the **frontend root folder**, run:
 
-```bash
+bash
 python -m http.server 5500
-```
+
 
 Frontend will be available at:
 
-```
+
 http://localhost:5500
-```
+
 
 ---
 
@@ -88,13 +88,13 @@ http://localhost:5500
 
 Update backend URL in:
 
-```
-js/config.js
-```
 
-```js
+js/config.js
+
+
+js
 const API_BASE_URL = "http://localhost:8081";
-```
+
 
 ---
 

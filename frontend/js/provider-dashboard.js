@@ -23,7 +23,6 @@ async function loadDashboard() {
             }
         });
 
-        // 🔒 Profile not completed or not allowed
         if (response.status === 403) {
             showError(`
                 <div class="error-box" style="text-align:center;">
@@ -73,14 +72,14 @@ function renderStats(data) {
 }
 
 
-// ================= RENDER JOB TABLE =================
+// ================= RENDER JOB CARDS =================
 function renderJobTable(perJob) {
-    const tbody = document.getElementById("jobStatsBody");
+    const container = document.getElementById("jobStatsBody");
     const emptyMsg = document.getElementById("emptyJobsMessage");
 
-    if (!tbody) return;
+    if (!container) return;
 
-    tbody.innerHTML = "";
+    container.innerHTML = "";
 
     if (!perJob || perJob.length === 0) {
         if (emptyMsg) emptyMsg.classList.remove("hidden");
@@ -92,29 +91,52 @@ function renderJobTable(perJob) {
     perJob.forEach(job => {
 
         const statusMeta = getStatusMeta(job.status);
-        const row = document.createElement("tr");
 
-        row.innerHTML = `
-            <td>
+        const card = document.createElement("div");
+        card.className = "job-card";
+
+        card.innerHTML = `
+            <div class="job-label">JOB TITLE</div>
+
+            <div class="job-title">
                 ${escapeHtml(job.jobTitle)}
                 <span class="status-badge ${statusMeta.class}">
                     ${statusMeta.label}
                 </span>
-            </td>
-            <td>${job.totalApplications ?? 0}</td>
-            <td>${job.shortlisted ?? 0}</td>
-            <td>${job.rejected ?? 0}</td>
-            <td>${job.hired ?? 0}</td>
-            <td>
+            </div>
+
+            <div class="job-card-stats">
+                <div class="job-stat">
+                    <span>Total Applicants</span>
+                    <strong>${job.totalApplications ?? 0}</strong>
+                </div>
+
+                <div class="job-stat">
+                    <span>Shortlisted</span>
+                    <strong>${job.shortlisted ?? 0}</strong>
+                </div>
+
+                <div class="job-stat">
+                    <span>Rejected</span>
+                    <strong>${job.rejected ?? 0}</strong>
+                </div>
+
+                <div class="job-stat">
+                    <span>Hired</span>
+                    <strong>${job.hired ?? 0}</strong>
+                </div>
+            </div>
+
+            <div class="job-card-action">
                 <button class="btn btn-sm view-applicants-btn"
                         data-job-id="${job.jobId}"
                         ${job.totalApplications === 0 ? "disabled" : ""}>
                     View
                 </button>
-            </td>
+            </div>
         `;
 
-        tbody.appendChild(row);
+        container.appendChild(card);
     });
 
     attachViewApplicantsHandlers();

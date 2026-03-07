@@ -1,13 +1,16 @@
-const BASE_URL = "https://easy-job-spot-production.up.railway.app/api/admin/providers";
+/* ================= CONFIG ================= */
+
+const API_BASE = `${window.APP_CONFIG.API_BASE_URL}/admin/providers`;
 
 let selectedProviderId = null;
 let actionType = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    closeConfirmModal();   // Always start hidden
+    closeConfirmModal();
 
     const token = localStorage.getItem("token");
+
     if (!token) {
         window.location.href = "/login.html";
         return;
@@ -16,12 +19,14 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchPendingProviders();
 });
 
+
 /* ================= FETCH ================= */
 
 async function fetchPendingProviders() {
 
     try {
-        const response = await fetch(`${BASE_URL}/pending`, {
+
+        const response = await fetch(`${API_BASE}/pending`, {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -33,49 +38,126 @@ async function fetchPendingProviders() {
         document.getElementById("totalPending").innerText =
             data.totalPending || 0;
 
-        renderProviders(data.providers || []);
+        const providers = data.providers || [];
+
+        renderProvidersTable(providers);
+        renderProvidersCards(providers);
 
     } catch (error) {
+
         console.error("Error fetching providers:", error);
+
     }
 }
 
-/* ================= RENDER ================= */
 
-function renderProviders(providers) {
+/* ================= DESKTOP TABLE ================= */
+
+function renderProvidersTable(providers) {
 
     const tbody = document.getElementById("providersTableBody");
-    tbody.innerHTML = "";
 
     if (!providers.length) {
+
         tbody.innerHTML =
-            `<tr><td colspan="4" style="text-align:center;">No pending providers</td></tr>`;
+            `<tr><td colspan="4" class="empty-row">No pending providers</td></tr>`;
+
         return;
     }
 
-    providers.forEach(provider => {
+    tbody.innerHTML = providers.map(provider => {
 
-        const row = document.createElement("tr");
+        return `
+        <tr>
 
-        row.innerHTML = `
             <td>${provider.name}</td>
+
             <td>${provider.email}</td>
-            <td><span class="badge badge-pending">${provider.providerStatus}</span></td>
+
             <td>
-                <button class="approve-btn">Approve</button>
-                <button class="reject-btn">Reject</button>
+                <span class="badge badge-pending">
+                    ${provider.providerStatus}
+                </span>
             </td>
+
+            <td>
+
+                <button class="approve-btn"
+                    onclick="openConfirmModal('approve', ${JSON.stringify(provider).replace(/"/g,'&quot;')})">
+                    Approve
+                </button>
+
+                <button class="reject-btn"
+                    onclick="openConfirmModal('reject', ${JSON.stringify(provider).replace(/"/g,'&quot;')})">
+                    Reject
+                </button>
+
+            </td>
+
+        </tr>
         `;
 
-        row.querySelector(".approve-btn")
-            .addEventListener("click", () => openConfirmModal("approve", provider));
+    }).join("");
 
-        row.querySelector(".reject-btn")
-            .addEventListener("click", () => openConfirmModal("reject", provider));
-
-        tbody.appendChild(row);
-    });
 }
+
+
+/* ================= MOBILE CARDS ================= */
+
+function renderProvidersCards(providers) {
+
+    const cardsContainer = document.getElementById("providersCards");
+
+    if (!cardsContainer) return;
+
+    if (!providers.length) {
+
+        cardsContainer.innerHTML =
+            `<div class="empty-row">No pending providers</div>`;
+
+        return;
+    }
+
+    cardsContainer.innerHTML = providers.map(provider => {
+
+        return `
+        <div class="provider-card">
+
+            <div class="provider-header">
+
+                <span class="provider-name">${provider.name}</span>
+
+                <span class="badge badge-pending">
+                    ${provider.providerStatus}
+                </span>
+
+            </div>
+
+            <div class="provider-email">
+                ${provider.email}
+            </div>
+
+            <div class="provider-actions">
+
+                <button class="approve-btn"
+                    onclick="openConfirmModal('approve', ${JSON.stringify(provider).replace(/"/g,'&quot;')})">
+                    Approve
+                </button>
+
+                <button class="reject-btn"
+                    onclick="openConfirmModal('reject', ${JSON.stringify(provider).replace(/"/g,'&quot;')})">
+                    Reject
+                </button>
+
+            </div>
+
+        </div>
+        `;
+
+    }).join("");
+
+}
+
 
 /* ================= MODAL CONTROL ================= */
 
@@ -90,26 +172,34 @@ function openConfirmModal(type, provider) {
     const actionBtn = document.getElementById("confirmActionBtn");
 
     if (type === "approve") {
+
         title.innerText = "Approve Provider";
         message.innerText = `Approve "${provider.name}"?`;
         actionBtn.innerText = "Approve";
         actionBtn.className = "approve-btn";
+
     } else {
+
         title.innerText = "Reject Provider";
         message.innerText = `Reject "${provider.name}"?`;
         actionBtn.innerText = "Reject";
         actionBtn.className = "reject-btn";
+
     }
 
     actionBtn.onclick = confirmAction;
 
     modal.classList.add("show");
+
 }
 
 function closeConfirmModal() {
+
     document.getElementById("confirmModal")
         .classList.remove("show");
+
 }
+
 
 /* ================= ACTION ================= */
 
@@ -119,10 +209,11 @@ async function confirmAction() {
 
     const endpoint =
         actionType === "approve"
-            ? `${BASE_URL}/${selectedProviderId}/approve`
-            : `${BASE_URL}/${selectedProviderId}/reject`;
+            ? `${API_BASE}/${selectedProviderId}/approve`
+            : `${API_BASE}/${selectedProviderId}/reject`;
 
     try {
+
         await fetch(endpoint, {
             method: "PUT",
             headers: {
@@ -134,6 +225,8 @@ async function confirmAction() {
         fetchPendingProviders();
 
     } catch (error) {
+
         console.error("Action failed:", error);
+
     }
 }

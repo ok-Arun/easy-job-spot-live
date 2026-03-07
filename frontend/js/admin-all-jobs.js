@@ -1,5 +1,8 @@
-const API_BASE = "https://easy-job-spot-production.up.railway.app/api/admin/jobs";
+const API_BASE = `${window.APP_CONFIG.API_BASE_URL}/admin/jobs`;
 const token = localStorage.getItem("token");
+
+let selectedJobId = null;
+let selectedAction = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -17,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// ================= READ STATUS FROM URL =================
+/* ================= URL FILTER ================= */
 
 function applyURLFilter() {
     const params = new URLSearchParams(window.location.search);
@@ -31,7 +34,7 @@ function applyURLFilter() {
 }
 
 
-// ================= FETCH WITH FILTER =================
+/* ================= FETCH JOBS ================= */
 
 async function fetchAllJobs() {
 
@@ -66,58 +69,75 @@ async function fetchAllJobs() {
 }
 
 
-// ================= RENDER =================
+/* ================= RENDER CARDS ================= */
 
 function renderJobs(jobs) {
 
-    const tableBody = document.getElementById("allJobsTableBody");
-    tableBody.innerHTML = "";
+    const container = document.getElementById("allJobsTableBody");
+    const jobCount = document.getElementById("jobCount");
+
+    container.innerHTML = "";
+    jobCount.textContent = `Total: ${jobs ? jobs.length : 0}`;
 
     if (!jobs || jobs.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" style="text-align:center; padding:20px;">
-                    No jobs found.
-                </td>
-            </tr>
+        container.innerHTML = `
+            <div style="padding:40px; text-align:center; color:#94a3b8;">
+                No jobs found.
+            </div>
         `;
         return;
     }
 
     jobs.forEach(job => {
 
-        const row = document.createElement("tr");
+        const applicantCount = job.totalApplicants ?? 0;
 
-        row.innerHTML = `
-            <td data-label="Title">${job.title}</td>
-            <td data-label="Company">${job.company}</td>
-            <td data-label="Location">${job.location}</td>
-            <td data-label="Status">
-                <span class="status-badge ${job.status}">
-                    ${job.status}
-                </span>
-            </td>
-            <td data-label="Posted On">
-                ${formatDate(job.createdAt)}
-            </td>
-            <td data-label="Actions">
+        const card = document.createElement("div");
+        card.className = "job-card";
+
+        card.innerHTML = `
+            <div class="job-main">
+
+                <div class="job-top-row">
+                    <span class="status-badge ${job.status}">
+                        ${job.status}
+                    </span>
+                </div>
+
+                <div class="job-title">${job.title}</div>
+
+                <div class="job-meta">
+                    ${job.company} • ${job.location}
+                </div>
+
+                <div class="job-meta">
+                    ${applicantCount} Applicants
+                </div>
+
+                <div class="job-date">
+                    Posted On: ${formatDate(job.createdAt)}
+                </div>
+
+            </div>
+
+            <div class="job-actions">
                 ${renderActions(job)}
-            </td>
+            </div>
         `;
 
-        tableBody.appendChild(row);
+        container.appendChild(card);
     });
 }
 
 
-// ================= ACTION BUTTONS =================
+/* ================= ACTION BUTTONS ================= */
 
 function renderActions(job) {
 
     const viewBtn = `
         <button class="view-btn"
                 onclick="viewApplications('${job.id}')">
-            Applications
+            Applicants
         </button>
     `;
 
@@ -155,14 +175,101 @@ function renderActions(job) {
 }
 
 
-// ================= VIEW APPLICATIONS =================
+/* ================= MODAL LOGIC ================= */
+
+function openModal(action, jobId) {
+
+    selectedAction = action;
+    selectedJobId = jobId;
+
+    const modal = document.getElementById("actionModal");
+    const title = document.getElementById("actionTitle");
+    const message = document.getElementById("actionMessage");
+    const confirmBtn = document.getElementById("confirmActionBtn");
+
+    modal.classList.remove("hidden");
+
+    if (action === "close") {
+        title.textContent = "Close Job";
+        message.textContent = "Are you sure you want to close this job?";
+        confirmBtn.textContent = "Close";
+    }
+
+    if (action === "remove") {
+        title.textContent = "Remove Job";
+        message.textContent = "This will permanently remove the job. Continue?";
+        confirmBtn.textContent = "Remove";
+    }
+
+    if (action === "restore") {
+        title.textContent = "Restore Job";
+        message.textContent = "Do you want to restore this job?";
+        confirmBtn.textContent = "Restore";
+    }
+
+    confirmBtn.onclick = confirmAction;
+}
+
+function closeActionModal() {
+    document.getElementById("actionModal").classList.add("hidden");
+    selectedJobId = null;
+    selectedAction = null;
+}
+
+
+/* ================= CONFIRM ACTION ================= */
+
+async function confirmAction() {
+
+    if (!selectedJobId || !selectedAction) return;
+
+    let endpoint = "";
+
+    if (selectedAction === "close") {
+        endpoint = `/${selectedJobId}/close`;
+    }
+
+    if (selectedAction === "remove") {
+        endpoint = `/${selectedJobId}/remove`;
+    }
+
+    if (selectedAction === "restore") {
+        endpoint = `/${selectedJobId}/restore`;
+    }
+
+    try {
+        const response = await fetch(API_BASE + endpoint, {
+            method: "PUT",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            alert("Action failed");
+            return;
+        }
+
+        closeActionModal();
+        fetchAllJobs(); // refresh list
+
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong");
+    }
+}
+
+
+/* ================= VIEW APPLICATIONS ================= */
 
 function viewApplications(jobId) {
     window.location.href = `admin-job-applications.html?jobId=${jobId}`;
 }
 
 
-// ================= UTIL =================
+/* ================= UTIL ================= */
 
 function formatDate(dateString) {
     const date = new Date(dateString);

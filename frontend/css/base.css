@@ -12,6 +12,7 @@ body {
     background-color: #f5f7fb;
     color: #1f2937;
     line-height: 1.5;
+    padding-top: 64px; /* Prevent content hiding behind fixed navbar */
 }
 
 
@@ -23,8 +24,14 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: #1e293b;
-    padding: 14px 28px;
-    position: relative;
+    padding: 0 28px;
+    height: 64px;
+
+    position: fixed;   /* FIXED NAVBAR */
+    top: 0;
+    left: 0;
+    width: 100%;
+
     z-index: 1000;
 }
 
@@ -35,9 +42,11 @@ body {
 }
 
 .nav-logo {
+
     font-size: 20px;
     font-weight: 600;
     color: #ffffff;
+    line-height: 104px;
 }
 
 /* Desktop Links */
@@ -127,19 +136,22 @@ body {
         display: block;
     }
 
+    /* KEEP NAVBAR HORIZONTAL */
     .provider-nav {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 18px;
     }
 
     .nav-left {
         width: 100%;
         justify-content: space-between;
+        align-items: center;
     }
 
     .nav-links {
-        position: absolute;
-        top: 60px;
+        position: fixed;         /* FIXED DROPDOWN */
+        top: 64px;               /* directly below navbar */
         left: 0;
         width: 100%;
         background: #1e293b;

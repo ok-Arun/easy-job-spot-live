@@ -1,5 +1,8 @@
-const API_BASE = "https://easy-job-spot-production.up.railway.app/api/admin/jobs";
+/* ================= CONFIG ================= */
+
+const API_BASE = `${window.APP_CONFIG.API_BASE_URL}/admin/jobs`;
 const token = localStorage.getItem("token");
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -32,11 +35,17 @@ function getJobIdFromURL() {
 async function fetchApplications(jobId) {
 
     try {
+
         const response = await fetch(`${API_BASE}/${jobId}/applications`, {
             headers: {
                 "Authorization": "Bearer " + token
             }
         });
+
+        if (!response.ok) {
+            alert("Failed to load applications");
+            return;
+        }
 
         const result = await response.json();
 
@@ -48,8 +57,10 @@ async function fetchApplications(jobId) {
         renderApplications(result.data);
 
     } catch (error) {
+
         console.error(error);
         alert("Error loading applications");
+
     }
 }
 
@@ -62,6 +73,7 @@ function renderApplications(applications) {
     tableBody.innerHTML = "";
 
     if (!applications || applications.length === 0) {
+
         tableBody.innerHTML = `
             <tr>
                 <td colspan="5" style="text-align:center; padding:20px;">
@@ -70,6 +82,7 @@ function renderApplications(applications) {
             </tr>
         `;
         return;
+
     }
 
     applications.forEach(app => {
@@ -93,6 +106,7 @@ function renderApplications(applications) {
         `;
 
         tableBody.appendChild(row);
+
     });
 }
 

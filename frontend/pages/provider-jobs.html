@@ -13,38 +13,106 @@
 
 <!-- Navbar injected by provider-layout.js -->
 
-<main class="container">
+<main class="container" role="main">
 
-    <h1 class="page-title">My Posted Jobs</h1>
+    <header class="page-header">
+        <h1 class="page-title">My Posted Jobs</h1>
+    </header>
 
     <!-- FILTERS -->
-    <div class="job-filters">
-        <button class="filter-btn active" onclick="applyFilter(this, '')">All</button>
-        <button class="filter-btn" onclick="applyFilter(this, 'ACTIVE')">Active</button>
-        <button class="filter-btn" onclick="applyFilter(this, 'PENDING_APPROVAL')">Pending</button>
-        <button class="filter-btn" onclick="applyFilter(this, 'CLOSED')">Closed</button>
-    </div>
+    <section class="job-filter-section" aria-label="Filter Jobs">
+        <div class="job-filters" role="group" aria-label="Job Status Filters">
 
-    <!-- STATE -->
-    <section id="stateContainer" class="state loading">
+            <button
+                    type="button"
+                    class="filter-btn active"
+                    aria-pressed="true"
+                    data-status="">
+                All
+            </button>
+
+            <button
+                    type="button"
+                    class="filter-btn"
+                    aria-pressed="false"
+                    data-status="ACTIVE">
+                Active
+            </button>
+
+            <button
+                    type="button"
+                    class="filter-btn"
+                    aria-pressed="false"
+                    data-status="PENDING_APPROVAL">
+                Pending
+            </button>
+
+            <button
+                    type="button"
+                    class="filter-btn"
+                    aria-pressed="false"
+                    data-status="CLOSED">
+                Closed
+            </button>
+
+        </div>
+    </section>
+
+    <!-- STATE / LOADING / ERROR -->
+    <section
+            id="stateContainer"
+            class="state loading"
+            aria-live="polite"
+            aria-busy="true">
         Loading jobs...
     </section>
 
     <!-- JOB LIST -->
-    <section id="jobsContainer" class="job-list hidden"></section>
+    <section
+            id="jobsContainer"
+            class="job-list hidden"
+            aria-live="polite">
+    </section>
+
+    <!-- PAGINATION -->
+    <section
+            id="paginationContainer"
+            class="pagination hidden"
+            aria-label="Pagination">
+    </section>
 
 </main>
 
 <!-- CONFIRMATION MODAL -->
-<div id="confirmModal" class="modal hidden">
+<div
+        id="confirmModal"
+        class="modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmTitle"
+        aria-describedby="confirmMessage">
+
     <div class="modal-box">
-        <h3 id="confirmTitle">Confirm Action</h3>
+
+        <h2 id="confirmTitle">Confirm Action</h2>
         <p id="confirmMessage">Are you sure?</p>
 
         <div class="modal-actions">
-            <button id="confirmCancel" class="btn btn-secondary">Cancel</button>
-            <button id="confirmOk" class="btn btn-primary">Confirm</button>
+            <button
+                    type="button"
+                    id="confirmCancel"
+                    class="btn btn-secondary">
+                Cancel
+            </button>
+
+            <button
+                    type="button"
+                    id="confirmOk"
+                    class="btn btn-primary">
+                Confirm
+            </button>
         </div>
+
     </div>
 </div>
 

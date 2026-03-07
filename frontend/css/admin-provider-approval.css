@@ -1,142 +1,255 @@
 /* ================= HEADER ================= */
 
-.page-header {
-    padding: 25px 40px;
-    background: #1e293b;
-    border-bottom: 1px solid #334155;
+.page-header{
+    padding:26px 40px;
+    background:#1e293b;
+    border-bottom:1px solid #334155;
 }
+
 
 /* ================= SUMMARY ================= */
 
-.summary-section {
-    padding: 40px 40px 0 40px;
+.summary-section{
+    padding:28px 40px 0;
 }
 
-.summary-card {
-    background: linear-gradient(135deg, #1e293b, #243247);
-    padding: 28px;
-    border-radius: 16px;
-    width: 320px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+.summary-card{
+    background:linear-gradient(145deg,#1e293b,#192334);
+    border:1px solid #334155;
+    border-radius:14px;
+    padding:24px;
+    width:320px;
 }
 
-.summary-card h3 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    color: #94a3b8;
+.summary-card h3{
+    margin:0;
+    font-size:13px;
+    color:#94a3b8;
 }
 
-.summary-card p {
-    font-size: 34px;
-    font-weight: 700;
-    margin: 0;
+.summary-card p{
+    margin-top:12px;
+    font-size:28px;
+    font-weight:700;
+    color:#f8fafc;
 }
+
 
 /* ================= TABLE ================= */
 
-.table-section {
-    padding: 40px;
+.table-section{
+    padding:30px 40px 42px;
 }
 
-.providers-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #1e293b;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+.table-wrapper{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+.providers-table{
+    width:100%;
+    border-collapse:collapse;
 }
 
 .providers-table th,
-.providers-table td {
-    padding: 18px;
-    text-align: left;
+.providers-table td{
+    padding:16px 18px;
+    text-align:left;
+    font-size:14px;
 }
 
-.providers-table thead {
-    background: #334155;
+.providers-table thead{
+    background:#334155;
 }
 
-.providers-table tbody tr {
-    border-bottom: 1px solid #334155;
-    transition: background 0.2s ease;
+.providers-table th{
+    font-weight:600;
+    color:#cbd5e1;
 }
 
-.providers-table tbody tr:hover {
-    background: #243247;
+.providers-table tbody tr{
+    border-bottom:1px solid #334155;
+    transition:background .15s ease;
 }
+
+.providers-table tbody tr:hover{
+    background:#243247;
+}
+
+.providers-table tbody tr:last-child{
+    border-bottom:none;
+}
+
+
+/* ================= BADGE ================= */
+
+.badge{
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.badge-pending{
+    background:#3a2f1e;
+    color:#facc15;
+}
+
 
 /* ================= BUTTONS ================= */
 
-button {
-    padding: 8px 16px;
-    margin-right: 8px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: 0.2s ease;
+.approve-btn,
+.reject-btn{
+    padding:8px 14px;
+    border-radius:8px;
+    border:none;
+    font-size:13px;
+    cursor:pointer;
+    margin-right:6px;
 }
 
-button:hover {
-    opacity: 0.85;
+.approve-btn{
+    background:#16a34a;
+    color:#fff;
 }
 
-.approve-btn {
-    background: #10b981;
-    color: white;
+.reject-btn{
+    background:#dc2626;
+    color:#fff;
 }
 
-.reject-btn {
-    background: #ef4444;
-    color: white;
+.secondary-btn{
+    padding:8px 14px;
+    border-radius:8px;
+    border:1px solid #334155;
+    background:#0f172a;
+    color:#e2e8f0;
+    cursor:pointer;
 }
 
-.secondary-btn {
-    background: #475569;
-    color: white;
+
+/* ================= EMPTY ================= */
+
+.empty-row{
+    text-align:center;
+    padding:28px;
+    color:#94a3b8;
 }
 
-/* ================= STATUS BADGE ================= */
-
-.badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-pending {
-    background: #f59e0b;
-    color: #1e293b;
-}
 
 /* ================= MODAL ================= */
 
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    display: none;             /* Hidden by default */
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-    z-index: 1000;
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    backdrop-filter:blur(4px);
+    z-index:1000;
 }
 
-.modal.show {
-    display: flex;             /* Show modal */
+.modal.show{
+    display:flex;
 }
 
-.modal-content {
-    background: #1e293b;
-    padding: 35px;
-    border-radius: 16px;
-    width: 420px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.5);
+.modal-content{
+    background:#1e293b;
+    padding:30px;
+    border-radius:14px;
+    width:420px;
+    border:1px solid #334155;
 }
 
-.modal-actions {
-    margin-top: 25px;
-    text-align: right;
+.modal-actions{
+    margin-top:22px;
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+}
+
+
+/* ================= DESKTOP ================= */
+
+.providers-cards{
+    display:none;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width:900px){
+
+
+.table-section{
+    padding:20px;
+}
+
+    .summary-section {
+        padding: 18px 20px;
+         display: flex;
+         justify-content: center;
+    }
+
+    .summary-card  {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .summary-card p {
+        font-size: 28px;
+    }
+
+.table-wrapper{
+    background:transparent;
+    border:none;
+}
+
+.providers-table{
+    display:none;
+}
+
+.providers-cards{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+
+/* CARD */
+
+.provider-card{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:14px;
+    padding:18px;
+}
+
+.provider-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:15px;
+    font-weight:600;
+    color:#f1f5f9;
+}
+
+.provider-email{
+    margin-top:6px;
+    font-size:13px;
+    color:#cbd5f5;
+}
+
+.provider-actions{
+    margin-top:12px;
+}
+
+.provider-actions button{
+    padding:7px 14px;
+    font-size:12px;
+}
+
 }

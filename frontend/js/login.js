@@ -46,13 +46,19 @@ async function login() {
             }
         }
 
-        // ===== SAVE SESSION =====
+        // ===== SAVE LOGIN SESSION =====
         saveAuthSession({
             token: data.token,
             userType: data.userType,
             userName: data.name,
             profileCompleted: false
         });
+
+        // ===== ADMIN REDIRECT =====
+        if (data.userType === "ADMIN" || data.userType === "SYSTEM_ADMIN") {
+            window.location.replace("/pages/admin-dashboard.html");
+            return;
+        }
 
         // ===== CHECK PROFILE STATUS =====
         await checkProfileStatus();
@@ -68,12 +74,6 @@ async function login() {
 async function checkProfileStatus() {
 
     const userType = getUserType();
-
-    // ✅ ADMIN → always dashboard (skip profile API call)
-    if (userType === "SYSTEM_ADMIN") {
-        window.location.replace("/pages/admin-dashboard.html");
-        return;
-    }
 
     try {
 
@@ -92,15 +92,10 @@ async function checkProfileStatus() {
         const data = await response.json();
         const isProfileComplete = data.profileCompleted === true;
 
-        // Update session
-        saveAuthSession({
-            token: getToken(),
-            userType: userType,
-            userName: getUserName(),
-            profileCompleted: isProfileComplete
-        });
+        // update profile completion status only
+        localStorage.setItem("profileCompleted", isProfileComplete ? "1" : "0");
 
-        // ===== SEEKER =====
+        // ===== JOB SEEKER =====
         if (userType === "JOB_SEEKER") {
 
             window.location.replace(
@@ -108,10 +103,11 @@ async function checkProfileStatus() {
                     ? "/index.html"
                     : "/pages/job-seeker-profile.html"
             );
+
             return;
         }
 
-        // ===== PROVIDER =====
+        // ===== JOB PROVIDER =====
         if (userType === "JOB_PROVIDER") {
 
             window.location.replace(
@@ -119,6 +115,7 @@ async function checkProfileStatus() {
                     ? "/pages/provider-dashboard.html"
                     : "/pages/provider-profile.html"
             );
+
             return;
         }
 
@@ -135,10 +132,13 @@ async function checkProfileStatus() {
 
 // ================= UI HELPERS =================
 function showMessage(message, type = "error") {
+
     const box = document.getElementById("messageBox");
+
     box.innerText = message;
     box.classList.remove("hidden", "error", "success");
     box.classList.add(type);
+
 }
 
 function hideMessage() {
@@ -153,10 +153,14 @@ function togglePassword() {
     const icon = document.getElementById("eyeIcon");
 
     if (input.type === "password") {
+
         input.type = "text";
         icon.classList.replace("fa-eye", "fa-eye-slash");
+
     } else {
+
         input.type = "password";
         icon.classList.replace("fa-eye-slash", "fa-eye");
+
     }
 }
