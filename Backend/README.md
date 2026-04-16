@@ -308,6 +308,36 @@ http://localhost:8081
 ```
 
 ---
+# 9.1 Development Data Seeding
+
+To improve developer experience and eliminate repetitive manual setup, the system includes a **data seeding mechanism** for development environments.
+
+### Behavior
+
+When the application starts in the `dev` profile:
+
+- Predefined **job seekers**, **providers**, and **jobs** are automatically created
+- Providers are seeded in an **APPROVED state**
+- Jobs are created directly in **ACTIVE state** for immediate visibility
+- Profiles are marked as **completed** to allow full workflow testing
+
+### Purpose
+
+This allows:
+
+- Immediate testing of job browsing and applications
+- Admin dashboard to display meaningful data
+- Faster iteration without manual setup
+
+### Important
+
+- Seeding runs **only in development (`dev`) profile**
+- Production environment strictly follows:
+  - Job approval required by admin
+  - Provider approval required before job posting
+
+This ensures **no compromise in production security or workflow integrity**.
+---
 
 # 10. Production Strengths
 
