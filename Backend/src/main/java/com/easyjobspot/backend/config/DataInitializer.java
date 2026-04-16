@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -73,7 +72,6 @@ public class DataInitializer implements CommandLineRunner {
 
     private User createSeeker(String name, String email) {
         User u = new User();
-        u.setId(UUID.randomUUID());
         u.setName(name);
         u.setEmail(email);
         u.setPassword(passwordEncoder.encode("12345678"));
@@ -85,7 +83,6 @@ public class DataInitializer implements CommandLineRunner {
 
     private User createProvider(String name, String email) {
         User u = new User();
-        u.setId(UUID.randomUUID());
         u.setName(name);
         u.setEmail(email);
         u.setPassword(passwordEncoder.encode("12345678"));
@@ -98,7 +95,6 @@ public class DataInitializer implements CommandLineRunner {
     private JobSeekerProfile createProfile(User user, String first, String last,
                                            String edu, String exp, String location) {
         JobSeekerProfile p = new JobSeekerProfile();
-        p.setId(UUID.randomUUID());
         p.setUser(user);
         p.setFirstName(first);
         p.setLastName(last);
@@ -112,7 +108,6 @@ public class DataInitializer implements CommandLineRunner {
     private ProviderProfile createProviderProfile(User user, String company,
                                                   String email, String address) {
         ProviderProfile p = new ProviderProfile();
-        p.setId(UUID.randomUUID());
         p.setUser(user);
         p.setCompanyName(company);
         p.setCompanyEmail(email);
