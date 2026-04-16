@@ -13,7 +13,6 @@ import com.easyjobspot.backend.profile.repository.JobSeekerProfileRepository;
 import com.easyjobspot.backend.profile.repository.ProviderProfileRepository;
 
 import com.easyjobspot.backend.job.entity.Job;
-import com.easyjobspot.backend.job.enums.JobStatus;
 import com.easyjobspot.backend.job.repository.JobRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-@Profile("dev") // remove if you want it always
+@Profile("dev")
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
@@ -39,10 +38,9 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // prevent duplicate data
         if (userRepository.count() > 1) return;
 
-        // ===================== JOB SEEKERS =====================
+        // ===== JOB SEEKERS =====
         User s1 = createSeeker("Rahul Kumar", "rahul@gmail.com");
         User s2 = createSeeker("Arjun Dev", "arjun@gmail.com");
         User s3 = createSeeker("Priya Singh", "priya@gmail.com");
@@ -55,7 +53,7 @@ public class DataInitializer implements CommandLineRunner {
         jobSeekerProfileRepository.save(createProfile(s2, "Arjun", "Dev", "MCA", "1 year", "Bangalore"));
         jobSeekerProfileRepository.save(createProfile(s3, "Priya", "Singh", "B.Tech", "3 years", "Delhi"));
 
-        // ===================== PROVIDERS =====================
+        // ===== PROVIDERS =====
         User p1 = createProvider("TechNova", "provider1@gmail.com");
         User p2 = createProvider("CloudSphere", "provider2@gmail.com");
 
@@ -65,17 +63,13 @@ public class DataInitializer implements CommandLineRunner {
         providerProfileRepository.save(createProviderProfile(p1, "TechNova Solutions", "hr@technova.com", "Bangalore"));
         providerProfileRepository.save(createProviderProfile(p2, "CloudSphere Inc.", "hr@cloudsphere.com", "Remote"));
 
-        // ===================== JOBS =====================
-        jobRepository.save(createJob("Java Backend Developer", "TechNova", "Bangalore", p1));
-        jobRepository.save(createJob("Spring Boot Developer", "TechNova", "Hyderabad", p1));
-        jobRepository.save(createJob("Frontend Developer", "CloudSphere", "Remote", p2));
-        jobRepository.save(createJob("React Developer", "CloudSphere", "Delhi", p2));
-        jobRepository.save(createJob("Full Stack Developer", "TechNova", "Pune", p1));
-
-        System.out.println("✅ Demo data loaded (3 seekers, 2 providers, 5 jobs)");
+        // ===== JOBS =====
+        saveApprovedJob("Java Backend Developer", "TechNova", "Bangalore", p1);
+        saveApprovedJob("Spring Boot Developer", "TechNova", "Hyderabad", p1);
+        saveApprovedJob("Frontend Developer", "CloudSphere", "Remote", p2);
+        saveApprovedJob("React Developer", "CloudSphere", "Delhi", p2);
+        saveApprovedJob("Full Stack Developer", "TechNova", "Pune", p1);
     }
-
-    // ===================== HELPERS =====================
 
     private User createSeeker(String name, String email) {
         User u = new User();
@@ -129,16 +123,21 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private Job createJob(String title, String company, String location, User provider) {
-        Job j = new Job();
-        j.setId(UUID.randomUUID());
-        j.setTitle(title);
-        j.setCompany(company);
-        j.setLocation(location);
-        j.setDescription(title + " role with growth opportunities.");
-        j.setStatus(JobStatus.ACTIVE);
-        j.setCreatedBy(provider.getId());
-        j.setCreatedAt(LocalDateTime.now());
-        j.setJobType("FULL_TIME"); // change if enum
-        return j;
+        return Job.builder()
+                .title(title)
+                .company(company)
+                .category("IT")
+                .location(location)
+                .jobType(Job.JobType.FULL_TIME)
+                .description(title + " role with growth opportunities.")
+                .createdBy(provider.getId())
+                .build();
+    }
+
+    private void saveApprovedJob(String title, String company, String location, User provider) {
+        Job job = createJob(title, company, location, provider);
+        job = jobRepository.save(job);
+        job.approve();
+        jobRepository.save(job);
     }
 }
