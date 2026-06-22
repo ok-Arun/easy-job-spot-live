@@ -3,7 +3,7 @@ spring:
     name: job-portal-backend
 
   datasource:
-    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}
+    url: ${MYSQL_URL}
     username: ${MYSQLUSER}
     password: ${MYSQLPASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -23,7 +23,7 @@ spring:
     time-zone: UTC
 
 server:
-  port: ${PORT}
+  port: ${PORT:8080}
   address: 0.0.0.0
   error:
     include-message: always
@@ -31,7 +31,7 @@ server:
     include-stacktrace: never
 
 jwt:
-  secret: easyjobspot-super-secret-key-very-long-123456789
+  secret: ${JWT_SECRET:easyjobspot-super-secret-key-very-long-123456789}
   expiration: 86400000
 
 cors:
@@ -41,7 +41,7 @@ cors:
 
 logging:
   level:
-    com.jobportal: INFO
+    com.easyjobspot.backend: INFO
     org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
     com.easyjobspot.backend.security: INFO
